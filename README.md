@@ -5,7 +5,8 @@ same time is not intended to troll with.
 
 This script uses Markov chains to learn how to shitpost. Using a user-specified board,
 this script trains a Markov chain on all posts on all pages of said board and generates
-shitposts on command. This doesn't actually post to 4chan.
+shitposts on command. Also includes a random image from the same board. This doesn't actually
+post to 4chan.
 
 This makes extensive use of 4chan's read-only JSON API.
 

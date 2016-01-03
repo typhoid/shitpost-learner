@@ -15,9 +15,13 @@ def sanitize( com ):
     return retval
 
 def append_to_train_string( board, thread_id ):
-    global mc, train_string
+    global train_string
 
-    response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
+    try:
+        response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
+    except ( urllib2.HTTPError ):
+        return
+    
     data = json.loads( response.read() )
 
     for post in data['posts']:
@@ -26,7 +30,11 @@ def append_to_train_string( board, thread_id ):
             train_string += u" {}".format( sanitized )
 
 def analyze_board( board ):
-    global train_string
+    global train_string, imageTimes, imageExt
+    
+    train_string = u""
+    imageTimes = []
+    imageExt = []
 
     print( "Training... (may take a while)" )
     response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
@@ -41,28 +49,30 @@ def analyze_board( board ):
     mc.generateDatabase( train_string )
 
 def image_prop( board, thread_id ):
+    global imageTimes, imageExt
+    
     response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
     data = json.loads( response.read() )
-
-    global imageTimes = []
-    global imageExt = []
 
     for post in data['posts']:
         if 'filename' in post:
             imageTimes.append( post['tim'] )
             imageExt.append( post['ext'] )
 
-
 def image_grab( board ):
-    randomNum = random.randint(0, len(imageTimes))
-    image_url = 'http(s)://i.4cdn.org/' + board + '/' + imageTimes[randomNum] + '.' + imageExt[randomNum]
-
+    global imageTimes, imageExt
+    
+    randomNum = randint(0, len(imageTimes))
+    image_url = 'http://i.4cdn.org' + board + str( imageTimes[randomNum] ) + imageExt[randomNum]
+    
+    return image_url
 
 def shitpost_loop( board ):
-    global mc, train_string
+    global mc
 
     read = ""
     used = set()
+    used_imgs = set()
 
     print( "Hit enter to generate a shitpost, or enter ? for a list of valid commands." )
 
@@ -75,7 +85,6 @@ def shitpost_loop( board ):
             print( "Enter 'train' to re-train the shitposter (this takes a while)." )
             print( "Enter 'board <board>' to switch to a different board (this takes a while)." )
         elif read == "train":
-            train_string = u""
             analyze_board( board )
             print( "Re-training complete." )
         elif read == "exit":
@@ -99,19 +108,24 @@ def shitpost_loop( board ):
             print( "Invalid input." )
         else:
             shitpost = mc.generateString()
+            image = image_grab( board )
 
             while shitpost in used:
                 shitpost = mc.generateString()
-                image =
+            
+            while image in used:
+                used = image_grab( board )
 
+            print( image )
             print( u">{}".format( shitpost ) )
+            
             used.add( shitpost )
+            used_imgs.add( image )
 
 def main( args ):
-    global mc, train_string
+    global mc
 
     mc = MarkovChain( "./shitpost_data" )
-    train_string = u""
     board = ""
 
     print( "Enter the name of the board you would like to learn how to shitpost from." )
@@ -127,7 +141,6 @@ def main( args ):
             board = ""
 
     analyze_board( board )
-    image_grab( board )
     shitpost_loop( board )
 
 if __name__ == "__main__":
