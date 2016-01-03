@@ -10,62 +10,102 @@ def sanitize( com ):
     retval = re.sub( r"\<.+\>", "", com )
     retval = retval.replace( "&quot;", "\"" )
     retval = retval.replace( "&#039;", "'" )
+    retval = retval.replace( "&gt;", ">" )
+    retval = retval.replace( "&lt;", "<" )
     return retval
 
-def train_on_thread( board, thread_id ):
-    global mc
+def append_to_train_string( board, thread_id ):
+    global mc, train_string
     
-    response = urllib2.urlopen( 'http://a.4cdn.org/' + board + '/thread/' + str( thread_id ) + '.json' )
+    response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
     data = json.loads( response.read() )
     
     for post in data['posts']:
         if 'com' in post:
-            mc.generateDatabase( sanitize( post['com'] ) )
+            sanitized = sanitize( post['com'] )
+            train_string += u" {}".format( sanitized )
 
 def analyze_board( board ):
+    global train_string
+    
     print( "Training... (may take a while)" )
-    response = urllib2.urlopen( 'http://a.4cdn.org/' + board + '/threads.json' )
+    response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
     data = json.loads( response.read() )
     thread_ids = list()
     
-    # Doing all 10 pages takes a long time
-    #for page in data:
-        #for thread in page['threads']:
-    for thread in data[randint( 0, 9 )]['threads']:
-        train_on_thread( board, thread['no'] )
+    for page in data:
+        for thread in page['threads']:
+            append_to_train_string( board, thread['no'] )
+    
+    mc.generateDatabase( train_string )
 
 def shitpost_loop( board ):
-    read = ''
+    global mc, train_string
+    
+    read = ""
     used = set()
     
+    print( "Hit enter to generate a shitpost, or enter ? for a list of valid commands." )
+    
     while read != "exit":
-        print( "\nEnter a command. Enter ? for a list of valid commands." )
         read = raw_input()
         
         if read == "?":
-            print( "\nValid input is:\nexit - Exit the program.\nprint - Generate a shitpost.\ntrain - Learn how to shitpost (takes a while)." )
+            print( "Hit enter to generate a shitpost." )
+            print( "Enter 'exit' to exit the program." )
+            print( "Enter 'train' to re-train the shitposter (this takes a while)." )
+            print( "Enter 'board <board>' to switch to a different board (this takes a while)." )
         elif read == "train":
+            train_string = u""
             analyze_board( board )
+            print( "Re-training complete." )
         elif read == "exit":
             pass
-        elif read == "print":
+        elif read.startswith( "board" ):
+            try:
+                board = read.split()[1]
+            except ( IndexError ):
+                print( "No board specified." )
+                continue
+            
+            try:
+                urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
+            except ( urllib2.HTTPError ):
+                print( "Invalid board." )
+                continue
+            
+            analyze_board( board )
+            print( "Switched to {}.".format( board ) )
+        elif read:
+            print( "Invalid input." )
+        else:
             shitpost = mc.generateString()
             
             while shitpost in used:
                 shitpost = mc.generateString()
             
             print( ">{}".format( shitpost ) )
-            used.add( shitpost )
-        else:
-            print( "Invalid input." )
+            used.add( shitpost ) 
 
 def main( args ):
-    global mc
+    global mc, train_string
     
     mc = MarkovChain( "./shitpost_data" )
+    train_string = u""
+    board = ""
     
     print( "Enter the name of the board you would like to learn how to shitpost from." )
-    board = raw_input()
+    print( "Ex. /a/, /fit/, /tv/, etc." )
+    
+    while not board:
+        board = raw_input()
+        
+        try:
+            urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
+        except ( urllib2.HTTPError ):
+            print( "Invalid board - try again." )
+            board = ""
+    
     analyze_board( board )
     shitpost_loop( board )
 
