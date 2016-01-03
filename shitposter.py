@@ -54,7 +54,7 @@ def shitpost_loop( board ):
             while shitpost in used:
                 shitpost = mc.generateString()
             
-            print( shitpost )
+            print( ">{}".format( shitpost ) )
             used.add( shitpost )
         else:
             print( "Invalid input." )
