@@ -6,7 +6,8 @@ from HTMLParser import HTMLParser
 from pymarkovchain import MarkovChain
 
 def sanitize( com ):
-    return re.sub( r"\<.+\>", "", com )
+    retval = re.sub( r"\<.+\>", "", com )
+    return retval.replace( "&#039;", "" )
 
 def train_on_thread( board, thread_id ):
     global mc
@@ -34,12 +35,10 @@ def shitpost_loop( board ):
     read = ''
     
     while read != "exit":
-        print( 'Enter a command. Enter ? for a list of valid commands.' )
+        print( "\nEnter a command. Enter ? for a list of valid commands." )
         read = raw_input()
         
-        if read.startswith( 'train' ):
-            mc.generateDatabase( read )
-        elif read == "?":
+        if read == "?":
             print( "\nValid input is:\nexit - Exit the program.\nprint - Generate a shitpost.\ntrain - Learn how to shitpost (takes a while)." )
         elif read == "train":
             analyze_board( board )
