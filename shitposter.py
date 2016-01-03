@@ -31,13 +31,12 @@ def analyze_board( board ):
     # Doing all 10 pages takes a long time
     #for page in data:
         #for thread in page['threads']:
-    
     for thread in data[randint( 0, 9 )]['threads']:
         train_on_thread( board, thread['no'] )
 
 def shitpost_loop( board ):
     read = ''
-    last = ''
+    used = set()
     
     while read != "exit":
         print( "\nEnter a command. Enter ? for a list of valid commands." )
@@ -50,13 +49,13 @@ def shitpost_loop( board ):
         elif read == "exit":
             pass
         elif read == "print":
-            next = mc.generateString()
+            shitpost = mc.generateString()
             
-            while next == last:
-                next = mc.generateString()
+            while shitpost in used:
+                shitpost = mc.generateString()
             
-            print( next )
-            last = next
+            print( shitpost )
+            used.add( shitpost )
         else:
             print( "Invalid input." )
 
