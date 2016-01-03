@@ -4,10 +4,13 @@ import json, re, sys, urllib2
 
 from HTMLParser import HTMLParser
 from pymarkovchain import MarkovChain
+from random import randint
 
 def sanitize( com ):
     retval = re.sub( r"\<.+\>", "", com )
-    return retval.replace( "&#039;", "" )
+    retval = retval.replace( "&quot;", "\"" )
+    retval = retval.replace( "&#039;", "'" )
+    return retval
 
 def train_on_thread( board, thread_id ):
     global mc
@@ -20,6 +23,7 @@ def train_on_thread( board, thread_id ):
             mc.generateDatabase( sanitize( post['com'] ) )
 
 def analyze_board( board ):
+    print( "Training... (may take a while)" )
     response = urllib2.urlopen( 'http://a.4cdn.org/' + board + '/threads.json' )
     data = json.loads( response.read() )
     thread_ids = list()
@@ -28,11 +32,12 @@ def analyze_board( board ):
     #for page in data:
         #for thread in page['threads']:
     
-    for thread in data[0]['threads']:
+    for thread in data[randint( 0, 9 )]['threads']:
         train_on_thread( board, thread['no'] )
 
 def shitpost_loop( board ):
     read = ''
+    last = ''
     
     while read != "exit":
         print( "\nEnter a command. Enter ? for a list of valid commands." )
@@ -45,7 +50,13 @@ def shitpost_loop( board ):
         elif read == "exit":
             pass
         elif read == "print":
-            print( mc.generateString() )
+            next = mc.generateString()
+            
+            while next == last:
+                next = mc.generateString()
+            
+            print( next )
+            last = next
         else:
             print( "Invalid input." )
 
