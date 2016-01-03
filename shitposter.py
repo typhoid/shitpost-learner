@@ -84,7 +84,7 @@ def shitpost_loop( board ):
             while shitpost in used:
                 shitpost = mc.generateString()
             
-            print( ">{}".format( shitpost ) )
+            print( u">{}".format( shitpost ) )
             used.add( shitpost ) 
 
 def main( args ):
