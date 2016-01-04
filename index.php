@@ -1,3 +1,9 @@
+<?
+    $boards = scandir( 'data' );
+    unset( $boards[0] );
+    unset( $boards[1] );
+?>
+
 <html>
 <head>
 <title>Shitpostbot</title>
@@ -5,11 +11,13 @@
 <body>
     <form method="get" id="shitpostform" action="cgi-bin/shitpost.cgi">
         <fieldset>
-            <legend>Watch those markov chains go</legend>
+            <legend>Generate Shitposts</legend>
             
             Board:
             <select name="board">
-                <option value="a">/a/</option>
+                <? foreach( $boards as $board ): ?>
+                    <option value="<?= $board ?>">/<?= $board ?>/</option>
+                <? endforeach ?>
             </select>
             
             <br />

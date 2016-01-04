@@ -41,7 +41,7 @@ def image_grab( images, board ):
     return 'http://i.4cdn.org' + board + images[random_num]  
 
 def get_shitposts( board, num_posts ):
-    mc = MarkovChain( '../data/shitpost_data_{}'.format( board ) )
+    mc = MarkovChain( '../data/{}'.format( board ) )
     retval = u''
     #images = get_board_images( board )
     
