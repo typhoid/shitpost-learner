@@ -31,12 +31,13 @@ def thread_prop( board, thread_id ):
     except ( urllib2.HTTPError ):
         return
     
+    retval = u''
     data = json.loads( response.read() )
 
     for post in data['posts']:
         if 'com' in post:
             sanitized = sanitize( post['com'] )
-            retval = u' {}'.format( sanitized )
+            retval += u' {}'.format( sanitized )
     
     return retval
 
@@ -49,7 +50,7 @@ def analyze_board( mc, board ):
 
     for page in data:
         for thread in page['threads']:
-            train_string += thread_prop( board, thread['no'] )
+            train_string += unicode( thread_prop( board, thread['no'] ) )
 
     mc.generateDatabase( train_string )
 
