@@ -24,7 +24,6 @@ def image_prop( images, board, thread_id ):
 def get_board_images( board ):
     images = []
 
-    print( 'Gathering images... (may take a while)' )
     response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
     data = json.loads( response.read() )
 
@@ -36,47 +35,21 @@ def get_board_images( board ):
 
 def image_grab( images, board ):
     random_num = randint( 0, len( images ) )
-    return 'http://i.4cdn.org' + board + images[random_num]
-
-def shitpost_loop( mc, images, board ):
-    read = ''
-    print( 'Hit enter to generate a shitpost, or enter ? for a list of valid commands.' )
-
-    while read != 'exit':
-        read = raw_input()
-
-        if read == '?':
-            print( 'Hit enter to generate a shitpost.' )
-            print( "Enter 'exit' to exit the program." )
-        elif read == 'exit':
-            pass
-        elif read:
-            print( 'Invalid input.' )
-        else:
-            image = image_grab( images, board )
-            shitpost = mc.generateString()
-
-            print( image )
-            print( u'>{}'.format( shitpost ) )
+    return 'http://i.4cdn.org' + board + images[random_num]  
 
 def main( args ):
-    board = ''
-
-    print( 'Enter the name of the board you would like to learn how to shitpost from.' )
-    print( 'Ex. /a/, /fit/, /tv/, etc.' )
-
-    while not board:
-        board = raw_input()
-
-        try:
-            urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
-        except ( urllib2.HTTPError ):
-            print( "Invalid board - try again." )
-            board = ''
+    board = args[0]
+    num_posts = int( args[1] )
 
     mc = MarkovChain( './shitpost_data_{}'.format( board[1:-1] ) )
-    images = get_board_images( board )
-    shitpost_loop( mc, images, board )
+    #images = get_board_images( board )
+    
+    for i in range( 0, num_posts ):
+        #image = image_grab( images, board )
+        shitpost = mc.generateString()
+
+        #print( image )
+        print( u'>{}'.format( shitpost ) )
 
 if __name__ == '__main__':
     main( sys.argv[1:] )
