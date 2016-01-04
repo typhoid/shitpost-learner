@@ -28,7 +28,7 @@ def thread_prop( images, board, thread_id ):
     try:
         response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
     except ( urllib2.HTTPError ):
-        return
+        return u''
     
     data = json.loads( response.read() )
     retval = u''
@@ -50,11 +50,10 @@ def analyze_board( mc, board ):
     print( 'Training... (may take a while)' )
     response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
     data = json.loads( response.read() )
-    thread_ids = list()
 
     for page in data:
         for thread in page['threads']:
-            train_string += unicode( thread_prop( images, board, thread['no'] ) )
+            train_string += thread_prop( images, board, thread['no'] )
 
     mc.generateDatabase( train_string )
     return images
