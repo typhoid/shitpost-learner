@@ -4,6 +4,8 @@ import json
 import re
 import sys
 import urllib2
+import os
+import pickle
 
 from pymarkovchain import MarkovChain
 from random import randint
@@ -26,7 +28,7 @@ def sanitize( com ):
 
 def thread_prop( images, board, thread_id ):
     try:
-        response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
+        response = urllib2.urlopen( 'http://a.4cdn.org/' + board + '/thread/' + str( thread_id ) + '.json' )
     except ( urllib2.HTTPError ):
         return u''
     
@@ -48,7 +50,7 @@ def analyze_board( mc, board ):
     images = []
 
     print( 'Training... (may take a while)' )
-    response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
+    response = urllib2.urlopen( 'http://a.4cdn.org/' + board + '/threads.json' )
     data = json.loads( response.read() )
 
     for page in data:
@@ -56,11 +58,30 @@ def analyze_board( mc, board ):
             train_string += thread_prop( images, board, thread['no'] )
 
     mc.generateDatabase( train_string )
+
+    # save database and images so we can load them later without rebuilding
+    mc.dumpdb()
+    with open('./{}-images'.format( board ), 'w') as file:
+        pickle.dump(images, file)
+
     return images
 
 def image_grab( images, board ):
     random_num = randint( 0, len( images ) )
-    return 'http://i.4cdn.org' + board + images[random_num]
+    return 'http://i.4cdn.org/' + board + '/' + images[random_num]
+
+def load_or_train_board(board):
+    mc_path = './{}-data'.format( board )
+    images_path = './{}-images'.format( board )
+
+    mc = MarkovChain(mc_path)
+    if not os.path.isfile(mc_path) or not os.path.isfile(images_path):
+        images = analyze_board( mc, board )
+    else:
+        with open(images_path) as file:
+            images = pickle.load(file)
+
+    return mc, images
 
 def shitpost_loop( mc, images, board ):
     read = ''
@@ -87,12 +108,12 @@ def shitpost_loop( mc, images, board ):
                 continue
 
             try:
-                urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
+                urllib2.urlopen( 'http://a.4cdn.org/' + board + '/threads.json' )
             except ( urllib2.HTTPError ):
                 print( 'Invalid board.' )
                 continue
 
-            images = analyze_board( mc, board )
+            mc, images = load_or_train_board(board)
             print( 'Switched to {}.'.format( board ) )
         elif read:
             print( 'Invalid input.' )
@@ -104,24 +125,22 @@ def shitpost_loop( mc, images, board ):
             print( u'>{}'.format( shitpost ) )
 
 def main( args ):
-    mc = MarkovChain( './shitpost_data' )
     board = ''
 
     print( 'Enter the name of the board you would like to learn how to shitpost from.' )
     print( 'Ex. /a/, /fit/, /tv/, etc.' )
 
     while not board:
-        board = raw_input()
+        board = raw_input().replace( '/','' )
 
         try:
-            urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
+            urllib2.urlopen( 'http://a.4cdn.org/' + board + '/threads.json' )
         except ( urllib2.HTTPError ):
             print( "Invalid board - try again." )
             board = ''
 
-    images = analyze_board( mc, board )
+    mc, images = load_or_train_board(board)
     shitpost_loop( mc, images, board )
 
 if __name__ == '__main__':
     main( sys.argv[1:] )
-
