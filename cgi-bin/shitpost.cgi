@@ -8,6 +8,7 @@ import re
 import sys
 import urllib2
 
+from datetime import date
 from HTMLParser import HTMLParser
 from pymarkovchain import MarkovChain
 from random import randint
@@ -60,18 +61,36 @@ print 'Content-Type: text/html;charset=utf-8'
 print
 
 fs = cgi.FieldStorage()
-board = fs['board'].value
-count = int( fs['count'].value )
-
 html = ' \
+    <!doctype html> \
     <html> \
     <head> \
-    <title>/%s/-tier shitposts</title> \
+        <meta charset="utf-8" /> \
+        <title>/%s/-tier shitposts</title> \
+        <link rel="stylesheet" type="text/css" href="../styles.css" /> \
     </head> \
     <body> \
-        <font color=789922>%s</font> \
+        <article> \
+            <i>Shitposts from /%s/</i> \
+            <br /> \
+            <br /> \
+            <font color=789922>%s</font> \
+            <br /> \
+            <a href="../index.php">&#8617; Shitpost Again</a> \
+        </article> \
     </body> \
     </html>'
 
-print html % ( board, get_shitposts( board, count ) )
+try:
+    board = fs['board'].value
+except ( KeyError ):
+    print html % ( '?', '?', '>{}<br />>not entering a board<br />'.format( date.today().year ) )
+    sys.exit( 0 )
+
+try:
+    count = int( fs['count'].value )
+except ( KeyError ):
+    count = 7
+
+print html % ( board, board, get_shitposts( board, count ) )
 

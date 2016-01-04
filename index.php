@@ -4,32 +4,36 @@
     unset( $boards[1] );
 ?>
 
+<!doctype html>
 <html>
 <head>
-<title>Shitpostbot</title>
+    <meta charset="utf-8" />
+    <title>Shitpostbot</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
-    <form method="get" id="shitpostform" action="cgi-bin/shitpost.cgi">
-        <fieldset>
-            <legend>Generate Shitposts</legend>
-            
-            Board:
-            <select name="board">
-                <? foreach( $boards as $board ): ?>
-                    <option value="<?= $board ?>">/<?= $board ?>/</option>
-                <? endforeach ?>
-            </select>
-            
-            <br />
-            
-            Number of Shitposts:
-            <input type="number" name="count" min="5" max="20">
-            
-            <br />
-            <br />
-            
-            <input type="submit">
-        </fieldset>
-    </form>
+    <article>
+        <form method="get" id="shitpostform" action="cgi-bin/shitpost.cgi">
+            <fieldset>
+                <legend>Generate Shitposts</legend>
+                
+                Board:
+                <select name="board">
+                    <? foreach( $boards as $board ): ?>
+                        <option value="<?= $board ?>">/<?= $board ?>/</option>
+                    <? endforeach ?>
+                </select>
+                
+                <br />
+                
+                Number of Shitposts:
+                <input type="number" name="count" min="5" max="20">
+                
+                <br />
+                
+                <input type="submit">
+            </fieldset>
+        </form>
+    </article>
 </body>
 </html>
