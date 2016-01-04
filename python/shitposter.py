@@ -41,7 +41,7 @@ def main( args ):
     board = args[0]
     num_posts = int( args[1] )
 
-    mc = MarkovChain( './shitpost_data_{}'.format( board[1:-1] ) )
+    mc = MarkovChain( '../data/shitpost_data_{}'.format( board[1:-1] ) )
     #images = get_board_images( board )
     
     for i in range( 0, num_posts ):
