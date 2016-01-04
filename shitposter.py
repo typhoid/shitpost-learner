@@ -76,7 +76,7 @@ def shitpost_loop( mc, images, board ):
             print( "Enter 'train' to re-train the shitposter (this takes a while)." )
             print( "Enter 'board <board>' to switch to a different board (this takes a while)." )
         elif read == 'train':
-            analyze_board( board )
+            images = analyze_board( mc, board )
             print( 'Re-training complete.' )
         elif read == 'exit':
             pass
@@ -93,7 +93,7 @@ def shitpost_loop( mc, images, board ):
                 print( 'Invalid board.' )
                 continue
 
-            analyze_board( mc, board )
+            images = analyze_board( mc, board )
             print( 'Switched to {}.'.format( board ) )
         elif read:
             print( 'Invalid input.' )
