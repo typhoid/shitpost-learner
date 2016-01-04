@@ -1,22 +1,31 @@
 #!/usr/bin/python
 
-import json, re, sys, urllib2
+import json
+import re
+import sys
+import urllib2
 
 from HTMLParser import HTMLParser
 from pymarkovchain import MarkovChain
 from random import randint
 
-images = []
+html_rep = {
+    '&amp;' : '&',
+    '&quot;' : '"',
+    '&#039;' : "'",
+    '&gt;' : '>',
+    '&lt;' : '<'
+}
 
 def sanitize( com ):
     retval = re.sub( r'\<.+\>', '', com )
-    retval = retval.replace( '&quot;', '"' )
-    retval = retval.replace( '&#039;', "'" )
-    retval = retval.replace( '&gt;', '>' )
-    retval = retval.replace( '&lt;', '<' )
+    
+    for sym in html_rep:
+        retval = retval.replace( sym, html_rep[sym] )
+    
     return retval
 
-def thread_prop( board, thread_id ):
+def thread_prop( images, board, thread_id ):
     try:
         response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
     except ( urllib2.HTTPError ):
@@ -45,15 +54,16 @@ def analyze_board( mc, board ):
 
     for page in data:
         for thread in page['threads']:
-            train_string += thread_prop( board, thread['no'] )
+            train_string += thread_prop( images, board, thread['no'] )
 
     mc.generateDatabase( train_string )
+    return images
 
-def image_grab( board ):
+def image_grab( images, board ):
     random_num = randint( 0, len( images ) )
     return 'http://i.4cdn.org' + board + images[random_num]
 
-def shitpost_loop( mc, board ):
+def shitpost_loop( mc, images, board ):
     read = ''
     print( 'Hit enter to generate a shitpost, or enter ? for a list of valid commands.' )
 
@@ -88,7 +98,7 @@ def shitpost_loop( mc, board ):
         elif read:
             print( 'Invalid input.' )
         else:
-            image = image_grab( board )
+            image = image_grab( images, board )
             shitpost = mc.generateString()
 
             print( image )
@@ -110,8 +120,8 @@ def main( args ):
             print( "Invalid board - try again." )
             board = ''
 
-    analyze_board( mc, board )
-    shitpost_loop( mc, board )
+    images = analyze_board( mc, board )
+    shitpost_loop( mc, images, board )
 
 if __name__ == '__main__':
     main( sys.argv[1:] )
