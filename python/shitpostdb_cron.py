@@ -56,7 +56,7 @@ def analyze_board( mc, board ):
 
 def main( args ):
     board = args[0]
-    mc = MarkovChain( './shitpost_data_' + board )
+    mc = MarkovChain( '../data/shitpost_data_' + board )
     analyze_board( mc, '/{}/'.format( board ) )
     mc.dumpdb()
 
