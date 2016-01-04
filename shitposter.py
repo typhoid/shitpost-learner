@@ -32,11 +32,12 @@ def thread_prop( images, board, thread_id ):
         return
     
     data = json.loads( response.read() )
+    retval = u''
 
     for post in data['posts']:
         if 'com' in post:
             sanitized = sanitize( post['com'] )
-            retval = u' {}'.format( sanitized )
+            retval += u' {}'.format( sanitized )
         
         if 'filename' in post:
             images.append( str( post['tim'] ) + post['ext'] )
@@ -54,7 +55,7 @@ def analyze_board( mc, board ):
 
     for page in data:
         for thread in page['threads']:
-            train_string += thread_prop( images, board, thread['no'] )
+            train_string += unicode( thread_prop( images, board, thread['no'] ) )
 
     mc.generateDatabase( train_string )
     return images
