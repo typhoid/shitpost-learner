@@ -21,7 +21,7 @@ For Linux users - simply run:
 # How to Use
 
 0. Install the required dependencies if you don't already have them.
-1. Run `./PyMarkovChain`.
+1. Run `./shitposter.py`.
 2. Enter a board to train on - ex. /a/, /b/, /co/, /tv/, etc.
 3. Once training is finished, hit enter to generate a shtipost.
 
