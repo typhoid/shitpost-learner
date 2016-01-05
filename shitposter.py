@@ -9,7 +9,7 @@ import urllib.error
 import urllib.request
 
 from pymarkovchain import MarkovChain
-from random import randint
+from random import choice
 
 html_rep = {
     '&amp;' : '&',
@@ -86,7 +86,7 @@ def load_or_train_board( board ):
 
 def shitpost_loop( mc, images, board ):
     read = ''
-    image_grab = lambda : 'http://i.4cdn.org/' + board + '/' + images[randint( 0, len( images ) )]
+    image_grab = lambda : 'http://i.4cdn.org/' + board + '/' + choice(images)
     
     print( 'Hit enter to generate a shitpost, or enter ? for a list of valid commands.' )
 
