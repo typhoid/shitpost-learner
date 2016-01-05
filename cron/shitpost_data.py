@@ -64,6 +64,10 @@ def analyze_board( mc, board ):
 
 def main( args ):
     board = args[0].replace( '/', '' )
+    
+    if not os.path.isdir( '../data' ):
+        os.mkdir( '../data' )
+    
     mc = MarkovChain( '../data/{}-data'.format( board ) )
     analyze_board( mc, board )
 
