@@ -142,6 +142,9 @@ def main( args ):
             print( "Invalid board - try again." )
             board = ''
 
+    if not os.path.isdir( './data' ):
+        os.mkdir( './data' )
+
     mc, images = load_or_train_board( board )
     shitpost_loop( mc, images, board )
 
