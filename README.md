@@ -21,9 +21,13 @@ For Linux users - simply run:
 # How to Use
 
 0. Install the required dependencies if you don't already have them.
-1. Run `./shitposter.py`.
+
+1.  For Python 3 users, run `shitposter3.py`.
+
+ For Python 2 users, run `shitposter.py`.
+
 2. Enter a board to train on - ex. /a/, /b/, /co/, /tv/, etc.
-3. Once training is finished, hit enter to generate a shtipost.
+3. Once training is finished, hit enter to generate a shitpost.
 
 The command `train` will re-train the Markov chain on the same board.
 
