@@ -5,8 +5,8 @@ same time is not intended to troll with.
 
 This script uses Markov chains to learn how to shitpost. Using a user-specified board,
 this script trains a Markov chain on all posts on all pages of said board and generates
-shitposts on command. Also includes a random image from the same board (thanks [ChangedNameTo](https://github.com/ChangedNameTo)!). This doesn't actually
-post to 4chan.
+shitposts on command. Also includes a random image from the same board. This doesn't
+actually post to 4chan.
 
 This makes extensive use of 4chan's read-only JSON API.
 
@@ -34,3 +34,8 @@ The command `train` will re-train the Markov chain on the same board.
 The command `board <board>` will switch to the specified board.
 
 The command `exit` will exit the script.
+
+# Credits
+[ChangedNameTo](https://github.com/ChangedNameTo) - Image-grabbing
+[franzwr](https://github.com/franzwr) - Data pickling
+[Tim La Roche](https://github.com/timlaroche) - Python 3 support
