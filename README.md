@@ -36,6 +36,6 @@ The command `board <board>` will switch to the specified board.
 The command `exit` will exit the script.
 
 # Credits
-[ChangedNameTo](https://github.com/ChangedNameTo) - Image-grabbing
-[franzwr](https://github.com/franzwr) - Data pickling
-[Tim La Roche](https://github.com/timlaroche) - Python 3 support
+* [ChangedNameTo](https://github.com/ChangedNameTo) - Image-grabbing
+* [franzwr](https://github.com/franzwr) - Data pickling
+* [Tim La Roche](https://github.com/timlaroche) - Python 3 support
