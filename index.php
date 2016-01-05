@@ -1,8 +1,11 @@
 <?
     $boards = scandir( 'data' );
-    unset( $boards[0] );
-    unset( $boards[1] );
+    unset( $boards[0] );    // Get rid of "."
+    unset( $boards[1] );    // Get rid of ".."
 
+    // Every board has two corresponding files: <board>-data and <board>-images
+    // All we care about is the board name, so get rid of the -data file and
+    // get only the board name from the -image file
     for( $i = 0; $i < count( $boards ); $i += 2 )
     {
         unset( $boards[$i + 2] );
