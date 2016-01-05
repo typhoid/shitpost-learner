@@ -35,7 +35,7 @@ def thread_prop( images, board, thread_id ):
     except ( urllib.error.HTTPError ):
         return retval
     
-    data = json.loads( response.readall().decode('utf-8') )
+    data = json.loads( response.read().decode('utf-8') )
 
     for post in data['posts']:
         if 'com' in post:
@@ -54,7 +54,7 @@ def analyze_board( mc, board ):
     print( 'Training... (may take a while)' )
     
     response = urllib.request.urlopen( 'http://a.4cdn.org/' + board + '/threads.json' )
-    data = json.loads( response.readall().decode('utf-8') )
+    data = json.loads( response.read().decode('utf-8') )
 
     for page in data:
         for thread in page['threads']:
