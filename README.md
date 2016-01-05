@@ -10,6 +10,8 @@ actually post to 4chan.
 
 This makes extensive use of 4chan's read-only JSON API.
 
+For a non-CLI version that runs in your browser, take a look at the [web branch](https://github.com/eon8ight/shitpost-learner/tree/web).
+
 # Dependencies
 
 * Python 3
