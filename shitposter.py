@@ -65,14 +65,10 @@ def analyze_board( mc, board ):
     # Save database and images so we can load them later without rebuilding
     mc.dumpdb()
     
-    with open('./data/{}-images'.format( board ), 'wb') as file:
-        pickle.dump(images, file)
+    with open('./data/{}-images'.format( board ), 'wb') as db_file:
+        pickle.dump( images, db_file )
 
     return images
-
-def image_grab( images, board ):
-    random_num = randint( 0, len( images ) )
-    return 'http://i.4cdn.org/' + board + '/' + images[random_num]
 
 def load_or_train_board( board ):
     mc_path = './data/{}-data'.format( board )
@@ -90,6 +86,8 @@ def load_or_train_board( board ):
 
 def shitpost_loop( mc, images, board ):
     read = ''
+    image_grab = lambda : 'http://i.4cdn.org/' + board + '/' + images[randint( 0, len( images ) )]
+    
     print( 'Hit enter to generate a shitpost, or enter ? for a list of valid commands.' )
 
     while read != 'exit':
@@ -119,11 +117,11 @@ def shitpost_loop( mc, images, board ):
                 continue
 
             mc, images = load_or_train_board( board )
-            print( 'Switched to {}.'.format( board ) )
+            print( 'Switched to /{}/.'.format( board ) )
         elif read:
             print( 'Invalid input.' )
         else:
-            image = image_grab( images, board )
+            image = image_grab()
             shitpost = mc.generateString()
 
             print( image )
