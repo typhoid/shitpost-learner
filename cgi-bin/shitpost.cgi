@@ -1,81 +1,64 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 import cgi
 import cgitb
 import json
+import pickle
 import re
 import sys
-import urllib2
+import urllib.error
+import urllib.request
 
 from datetime import date
-from HTMLParser import HTMLParser
 from pymarkovchain import MarkovChain
 from random import randint
 
-def image_prop( images, board, thread_id ):
-    try:
-        response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'thread/' + str( thread_id ) + '.json' )
-    except ( urllib2.HTTPError ):
-        return
+def load_board( board ):
+    mc_path = '../data/{}-data'.format( board )
+    images_path = '../data/{}-images'.format( board )
+
+    mc = MarkovChain( mc_path )
     
-    data = json.loads( response.read() )
+    with open( images_path, 'rb' ) as images_file:
+        images = pickle.load( images_file )
 
-    for post in data['posts']:
-        if 'filename' in post:
-            images.append( str( post['tim'] ) + post['ext'] )
-
-def get_board_images( board ):
-    images = []
-
-    response = urllib2.urlopen( 'http://a.4cdn.org' + board + 'threads.json' )
-    data = json.loads( response.read() )
-
-    for page in data:
-        for thread in page['threads']:
-            image_prop( images, board, thread['no'] )
-
-    return images
-
-def image_grab( images, board ):
-    random_num = randint( 0, len( images ) )
-    return 'http://i.4cdn.org' + board + images[random_num]  
+    return mc, images
 
 def get_shitposts( board, num_posts ):
-    mc = MarkovChain( '../data/{}'.format( board ) )
+    mc, images = load_board( board )
+    image_grab = lambda : 'http://i.4cdn.org/' + board + '/' + images[randint( 0, len( images ) )]
     retval = u''
-    #images = get_board_images( board )
     
     for i in range( 0, num_posts ):
-        #image = image_grab( images, board )
+        image = image_grab()
         shitpost = mc.generateString()
 
-        #print( image )
-        retval += u'>{}<br />'.format( shitpost )
+        retval += '<a href={}>{}</a><br />'.format( image, image )
+        retval += u'>{}<br /><br />'.format( shitpost )
     
     return retval
 
 cgitb.enable()
 
-print 'Content-Type: text/html;charset=utf-8'
-print
+print( 'Content-Type: text/html;charset=utf-8' )
+print()
 
 fs = cgi.FieldStorage()
-html = ' \
+html = u' \
     <!doctype html> \
     <html> \
     <head> \
         <meta charset="utf-8" /> \
-        <title>/%s/-tier shitposts</title> \
+        <title>/{}/-tier shitposts</title> \
         <link rel="stylesheet" type="text/css" href="../styles.css" /> \
     </head> \
     <body> \
         <article> \
-            <i>Shitposts from /%s/</i> \
+            <i>Shitposts from /{}/</i> \
             <br /> \
             <br /> \
-            <font color=789922>%s</font> \
-            <br /> \
+            <font color=789922>{}</font> \
             <a href="../index.php">&#8617; Shitpost Again</a> \
         </article> \
     </body> \
@@ -84,7 +67,7 @@ html = ' \
 try:
     board = fs['board'].value
 except ( KeyError ):
-    print html % ( '?', '?', '>{}<br />>not entering a board<br />'.format( date.today().year ) )
+    print( html.format( '?', '?', '>{}<br />>not entering a board<br /><br />'.format( date.today().year ) ) )
     sys.exit( 0 )
 
 try:
@@ -92,5 +75,5 @@ try:
 except ( KeyError ):
     count = 7
 
-print html % ( board, board, get_shitposts( board, count ) )
+print( html.format( board, board, get_shitposts( board, count ) ) )
 

@@ -2,6 +2,12 @@
     $boards = scandir( 'data' );
     unset( $boards[0] );
     unset( $boards[1] );
+
+    for( $i = 0; $i < count( $boards ); $i += 2 )
+    {
+        unset( $boards[$i + 2] );
+        $boards[$i + 3] = explode( '-', $boards[$i + 3] )[0];
+    }
 ?>
 
 <!doctype html>
