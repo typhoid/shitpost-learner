@@ -36,11 +36,11 @@
                 <br />
                 
                 Number of Shitposts:
-                <input type="number" name="count" min="5" max="20">
+                <input type="number" name="count" min="5" max="20" />
                 
                 <br />
                 
-                <input type="submit">
+                <input type="submit" value="Shitpost" />
             </fieldset>
         </form>
     </article>
