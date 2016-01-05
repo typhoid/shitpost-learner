@@ -12,7 +12,7 @@ import urllib.request
 
 from datetime import date
 from pymarkovchain import MarkovChain
-from random import randint
+from random import choice
 
 def load_board( board ):
     mc_path = '../data/{}-data'.format( board )
@@ -27,7 +27,7 @@ def load_board( board ):
 
 def get_shitposts( board, num_posts ):
     mc, images = load_board( board )
-    image_grab = lambda : 'http://i.4cdn.org/' + board + '/' + images[randint( 0, len( images ) )]
+    image_grab = lambda : 'http://i.4cdn.org/' + board + '/' + choice( images )
     retval = u''
     
     for i in range( 0, num_posts ):
