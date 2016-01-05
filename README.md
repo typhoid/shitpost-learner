@@ -16,10 +16,7 @@ For a non-CLI version that runs in your browser, take a look at the [web branch]
 
 * Python 3
 * PyMarkovChain
-
-For Linux users - simply run:
-
-`sudo pip3 install PyMarkovChain`
+* urllib
 
 # How to Use
 
